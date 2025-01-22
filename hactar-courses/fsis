@@ -1,0 +1,1439 @@
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const coursesPerPage = 25; // Number of courses per page
+        const coursesContainer = document.getElementById("coursesContainer");
+        const paginationContainer = document.getElementById("paginationContainer");
+
+        const courses = [
+            // Your array of course objects (add as many as needed for testing)
+            { title: "Learn JavaScript", language: "english", category: "programming", platform: "udemy", img: "/course.img/Effective_Communication_(2).png", description: "Master JavaScript with hands-on projects.", url: "https://www.udemy.com/course/learn-javascript/" },
+            { title: "Diseño Gráfico", language: "spanish", category: "design", platform: "coursera", img: "https://via.placeholder.com/250x150", description: "Aprende diseño gráfico desde cero.", url: "https://www.coursera.org/courses?query=diseño%20gráfico" },
+            { title: "Business Basics", language: "english", category: "business", platform: "edx", img: "https://via.placeholder.com/250x150", description: "Get started with business fundamentals.", url: "https://www.edx.org/course/business-basics" },
+            { title: "Python for Beginners", language: "hindi", category: "programming", platform: "udemy", img: "https://via.placeholder.com/250x150", description: "Python programming in Hindi.", url: "https://www.udemy.com/course/python-for-beginners/" },
+            // Add more courses here
+        ];
+
+        const totalCourses = courses.length;
+        const totalPages = Math.ceil(totalCourses / coursesPerPage);
+
+        const displayCourses = (page) => {
+            coursesContainer.innerHTML = ""; // Clear the container
+            const startIndex = (page - 1) * coursesPerPage;
+            const endIndex = Math.min(startIndex + coursesPerPage, totalCourses);
+
+            const currentCourses = courses.slice(startIndex, endIndex);
+            currentCourses.forEach(course => {
+                const courseElement = document.createElement("div");
+                courseElement.classList.add("course-card");
+                courseElement.innerHTML = `
+                    <a href="${course.url}">
+                        <img src="${course.img}" alt="${course.title}" />
+                        <h3>${course.title}</h3>
+                        <p>${course.description}</p>
+                    </a>
+                `;
+                coursesContainer.appendChild(courseElement);
+            });
+        };
+
+        const displayPagination = (currentPage) => {
+            paginationContainer.innerHTML = ""; // Clear pagination
+
+            const createPageButton = (page) => {
+                const button = document.createElement("button");
+                button.textContent = page;
+                button.classList.add("pagination-button");
+                if (page === currentPage) {
+                    button.classList.add("active");
+                }
+                button.addEventListener("click", () => {
+                    displayCourses(page);
+                    displayPagination(page);
+                });
+                return button;
+            };
+
+            // Previous button
+            if (currentPage > 1) {
+                const prevButton = createPageButton(currentPage - 1);
+                prevButton.textContent = "«";
+                paginationContainer.appendChild(prevButton);
+            }
+
+            // Page buttons
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    paginationContainer.appendChild(createPageButton(i));
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    const dots = document.createElement("span");
+                    dots.textContent = "...";
+                    paginationContainer.appendChild(dots);
+                }
+            }
+
+            // Next button
+            if (currentPage < totalPages) {
+                const nextButton = createPageButton(currentPage + 1);
+                nextButton.textContent = "»";
+                paginationContainer.appendChild(nextButton);
+            }
+        };
+
+        // Initialize with page 1
+        displayCourses(1);
+        displayPagination(1);
+    });
+</script>
+
+
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const courses = [
+            {
+                title: "Learn JavaScript",
+                language: "english",
+                category: "programming",
+                platform: "udemy",
+                img: "/course.img/Effective_Communication_(2).png",
+                description: "Master JavaScript with hands-on projects.",
+                url: "https://www.udemy.com/course/learn-javascript/"
+            },
+            {
+                title: "Diseño Gráfico",
+                language: "spanish",
+                category: "design",
+                platform: "coursera",
+                img: "https://via.placeholder.com/250x150",
+                description: "Aprende diseño gráfico desde cero.",
+                url: "https://www.coursera.org/courses?query=diseño%20gráfico"
+            },
+            {
+                title: "Business Basics",
+                language: "english",
+                category: "business",
+                platform: "edx",
+                img: "https://via.placeholder.com/250x150",
+                description: "Get started with business fundamentals.",
+                url: "https://www.edx.org/course/business-basics"
+            },
+            {
+                title: "Python for Beginners",
+                language: "hindi",
+                category: "programming",
+                platform: "udemy",
+                img: "https://via.placeholder.com/250x150",
+                description: "Python programming in Hindi.",
+                url: "https://www.udemy.com/course/python-for-beginners/"
+            },
+            // Add more courses here
+        ];
+    
+        const coursesContainer = document.getElementById("coursesContainer");
+        const paginationContainer = document.getElementById("paginationContainer");
+        const languageFilter = document.getElementById("languageFilter");
+        const categoryFilter = document.getElementById("categoryFilter");
+        const platformFilter = document.getElementById("platformFilter");
+        const searchBar = document.getElementById("searchBar");
+        const sortBy = document.getElementById("sortBy");
+    
+        const coursesPerPage = 3; // Number of courses per page
+        let currentPage = 1;
+    
+        function renderCourses(filter = {}) {
+            const { language, category, platform, search, sort } = filter;
+            let filteredCourses = courses.filter(course =>
+                (language === "all" || course.language === language) &&
+                (category === "all" || course.category === category) &&
+                (platform === "all" || course.platform === platform) &&
+                (!search || course.title.toLowerCase().includes(search.toLowerCase()))
+            );
+    
+            if (sort === "title") {
+                filteredCourses.sort((a, b) => a.title.localeCompare(b.title));
+            } else if (sort === "platform") {
+                filteredCourses.sort((a, b) => a.platform.localeCompare(b.platform));
+            }
+    
+            const totalCourses = filteredCourses.length;
+            const totalPages = Math.ceil(totalCourses / coursesPerPage);
+            const startIndex = (currentPage - 1) * coursesPerPage;
+            const endIndex = Math.min(startIndex + coursesPerPage, totalCourses);
+    
+            coursesContainer.innerHTML = ""; // Clear courses
+            filteredCourses.slice(startIndex, endIndex).forEach(course => {
+                const courseCard = document.createElement("a");
+                courseCard.href = course.url;
+                courseCard.target = "_blank";
+                courseCard.className = "course-card";
+                courseCard.innerHTML = `
+                    <img src="${course.img}" alt="${course.title}">
+                    <h3>${course.title}</h3>
+                    <p>${course.description}</p>
+                    <small><strong>Platform:</strong> ${course.platform}</small><br>
+                    <small><strong>Language:</strong> ${course.language}</small><br>
+                    <small><strong>Category:</strong> ${course.category}</small>
+                `;
+                coursesContainer.appendChild(courseCard);
+            });
+    
+            displayPagination(totalPages);
+        }
+    
+        function displayPagination(totalPages) {
+            paginationContainer.innerHTML = ""; // Clear pagination
+    
+            const createPageButton = (page) => {
+                const button = document.createElement("button");
+                button.textContent = page;
+                button.classList.add("pagination-button");
+                if (page === currentPage) {
+                    button.classList.add("active");
+                }
+                button.addEventListener("click", () => {
+                    currentPage = page;
+                    renderCourses(getFilters());
+                });
+                return button;
+            };
+    
+            // Previous button
+            if (currentPage > 1) {
+                const prevButton = createPageButton(currentPage - 1);
+                prevButton.textContent = "«";
+                paginationContainer.appendChild(prevButton);
+            }
+    
+            // Page buttons
+            for (let i = 1; i <= totalPages; i++) {
+                paginationContainer.appendChild(createPageButton(i));
+            }
+    
+            // Next button
+            if (currentPage < totalPages) {
+                const nextButton = createPageButton(currentPage + 1);
+                nextButton.textContent = "»";
+                paginationContainer.appendChild(nextButton);
+            }
+        }
+    
+        function getFilters() {
+            return {
+                language: languageFilter.value,
+                category: categoryFilter.value,
+                platform: platformFilter.value,
+                search: searchBar.value,
+                sort: sortBy.value
+            };
+        }
+    
+        // Event listeners for filters and sorting
+        languageFilter.addEventListener("change", () => { currentPage = 1; renderCourses(getFilters()); });
+        categoryFilter.addEventListener("change", () => { currentPage = 1; renderCourses(getFilters()); });
+        platformFilter.addEventListener("change", () => { currentPage = 1; renderCourses(getFilters()); });
+        searchBar.addEventListener("input", () => { currentPage = 1; renderCourses(getFilters()); });
+        sortBy.addEventListener("change", () => { currentPage = 1; renderCourses(getFilters()); });
+    
+        // Initial render
+        renderCourses();
+    });
+    </script>
+
+
+
+
+const carouselWrapper = document.querySelector('.carousel-wrapper');
+        const carouselItems = document.querySelectorAll('.carousel-item');
+        let isMouseDown = false;
+        let startX, scrollLeft;
+
+        // Auto swipe interval
+        let currentIndex = 0;
+        const totalItems = carouselItems.length;
+
+        function moveCarousel() {
+            if (currentIndex === totalItems) {
+                currentIndex = 0;
+            }
+            carouselWrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+            currentIndex++;
+        }
+
+        // Enable auto swipe
+        setInterval(moveCarousel, 3000);  // 3000ms (3 seconds) for auto-swipe
+
+        // Enable manual swipe (drag)
+        carouselWrapper.addEventListener('mousedown', (e) => {
+            isMouseDown = true;
+            startX = e.pageX - carouselWrapper.offsetLeft;
+            scrollLeft = carouselWrapper.scrollLeft;
+            carouselWrapper.style.cursor = 'grabbing';
+        });
+
+        carouselWrapper.addEventListener('mouseleave', () => {
+            isMouseDown = false;
+            carouselWrapper.style.cursor = 'grab';
+        });
+
+        carouselWrapper.addEventListener('mouseup', () => {
+            isMouseDown = false;
+            carouselWrapper.style.cursor = 'grab';
+        });
+
+        carouselWrapper.addEventListener('mousemove', (e) => {
+            if (!isMouseDown) return;
+            e.preventDefault();
+            const x = e.pageX - carouselWrapper.offsetLeft;
+            const walk = (x - startX) * 2; // Scroll speed multiplier
+            carouselWrapper.scrollLeft = scrollLeft - walk;
+        });
+
+        // Infinite loop
+        function loopCarousel() {
+            setInterval(() => {
+                if (currentIndex === totalItems) {
+                    currentIndex = 0;
+                }
+                carouselWrapper.style.transition = 'none'; // Disable transition for smooth loop
+                carouselWrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+                currentIndex++;
+            }, 3000); // Auto swipe every 3 seconds
+        }
+
+        loopCarousel();
+    </script>
+
+    <script>
+        // Select necessary elements
+        const menuIcon = document.querySelector('.menu-icon');
+        const mobileMenu = document.querySelector('.mobile-menu-items');
+        const closeIcon = document.querySelector('.mobile-menu-items .close-icon');
+
+        // Open Mobile Menu
+        menuIcon.addEventListener('click', () => {
+            mobileMenu.style.display = 'flex';
+        });
+
+        // Close Mobile Menu
+        closeIcon.addEventListener('click', () => {
+            mobileMenu.style.display = 'none';
+        });
+
+        // Smooth Scrolling for Links
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const coursesPerPage = 30; // Number of courses per page
+            const coursesContainer = document.getElementById("coursesContainer");
+            const paginationContainer = document.getElementById("paginationContainer");
+
+            const languageFilter = document.getElementById("languageFilter");
+            const categoryFilter = document.getElementById("categoryFilter");
+            const platformFilter = document.getElementById("platformFilter");
+
+            const courses = [
+                { title: "Introduction to Oracle Cloud Essentials", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "/course.img/Effective_Communication_(2).png", 
+                description: "Are you new to Oracle Financials Cloud ? These classes will help kick-start your learning!", 
+                url:"https://mylearn.oracle.com/ou/learning-path/introduction-to-oracle-cloud-essentials/115954" },
+                
+                { title: "Oracle Cloud Applications Overview", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "/course.img/Screenshot 2024-12-16 095435.png", 
+                description: "Are you new to Oracle Financials Cloud ? These classes will help kick-start your learning!", 
+                url: "https://mylearn.oracle.com/ou/learning-path/oracle-cloud-applications-overview/115408" },
+
+                { title: "Oracle Fusion Cloud Financials: Financials Overview", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Get an overview of the core functions and capabilities of Oracle Financials Cloud Products.", 
+                url: "https://mylearn.oracle.com/ou/course/oracle-fusion-cloud-financials-financials-overview/127477/" },
+
+                { title: "Planning Essentials for Oracle Cloud Applications", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Get an overview of the core functions and capabilities of Oracle Financials Cloud Products.", 
+                url: "https://mylearn.oracle.com/ou/learning-path/planning-essentials-for-oracle-cloud-applications/119930" },
+
+                { title: "Oracle Playbook for Supply Chain Excellence", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "The Oracle Playbook is a compilation of our learnings over the last 20-plus years and explains how we focus on people, processes, and systems so we can achieve more with less.", 
+                url: "https://mylearn.oracle.com/ou/course/oracle-playbook-for-supply-chain-excellence/143849/" },
+
+                { title: "Operational Excellence", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "The Oracle Playbook is a compilation of our learnings over the last 20-plus years and explains how we focus on people, processes, and systems so we can achieve more with less.", 
+                url: "https://mylearn.oracle.com/ou/course/operational-excellence/123796/" },
+
+                { title: "AI Foundation for Oracle Cloud Applications", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Learn how AI in Oracle Fusion Enterprise Resource Planning (ERP) helps you make better decisions, finish tasks faster, and streamline Oracle Fusion CX processes.", 
+                url: "https://mylearn.oracle.com/ou/course/ai-foundation-for-oracle-cloud-applications/127296/" },
+
+                { title: "Oracle AI in Fusion Cloud Enterprise Resource Planning (ERP)", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Learn how AI in Oracle Fusion Enterprise Resource Planning (ERP) helps you make better decisions, finish tasks faster, and streamline Oracle Fusion CX processes.", 
+                url: "https://mylearn.oracle.com/ou/learning-path/oracle-ai-in-fusion-cloud-enterprise-resource-planning-erp/138666" },
+
+                { title: "What's New in Oracle Fusion Cloud Financials 24D", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Learn new features and capabilities", 
+                url: "https://mylearn.oracle.com/ou/learning-path/whats-new-in-oracle-fusion-cloud-financials-24d/142814" },
+
+                { title: "What's New in Risk Management 24D", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Learn new features and capabilities", 
+                url: "https://mylearn.oracle.com/ou/learning-path/whats-new-in-risk-management-24d/143293" },
+
+                { title: "Become a Certified Financials - General Ledger Implementer", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Become the expert implementer in your organization, and get Certified!", 
+                url: "https://mylearn.oracle.com/ou/learning-path/become-a-certified-financials-general-ledger-implementer/96455" },
+
+                { title: "Become a Certified Financials - Payables Implementer", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Become the expert implementer in your organization, and get Certified!", 
+                url: "https://mylearn.oracle.com/ou/learning-path/become-a-certified-financials-payables-implementer/96453" },
+
+                { title: "Prepare for Oracle Financials Cloud: Revenue Management Certification", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Prepare for Your Certification Exam, Find exam guides, sample questions, and other exam preparation resources", 
+                url: "https://mylearn.oracle.com/ou/course/prepare-for-oracle-financials-cloud-revenue-management-certification/141021/" },
+
+                { title: "Prepare for Oracle Financials Cloud: Risk Management Certification", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Prepare for Your Certification Exam, Find exam guides, sample questions, and other exam preparation resources", 
+                url: "https://mylearn.oracle.com/ou/course/prepare-for-oracle-financials-cloud-risk-management-certification/140866/" },
+
+                { title: "Delta Exam Preparation: Certified General Ledger Implementer", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Simplify the process of recertification", 
+                url: "https://mylearn.oracle.com/ou/learning-path/delta-exam-preparation-certified-general-ledger-implementer/120374" },
+
+                { title: "Delta Exam Preparation: Certified Payables Implementer", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Simplify the process of recertification", 
+                url: "https://mylearn.oracle.com/ou/learning-path/delta-exam-preparation-certified-payables-implementer/120386" },
+
+                { title: "Getting Started with Fusion Data Intelligence", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Learn about Oracle Fusion Analytics Warehouse: Analytics for Oracle Cloud applications, powered by Autonomous Data Warehouse and Oracle Analytics.", 
+                url: "https://mylearn.oracle.com/ou/course/getting-started-with-fusion-data-intelligence/133877/" },
+
+                { title: "Technical Learning Path: Administer Security and Functional Setups for ERP", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Learn to Develop, Customize, Maintain and Support the ERP Application", 
+                url: "https://mylearn.oracle.com/ou/learning-path/technical-learning-path-administer-security-and-functional-setups-for-erp/110298" },
+
+                { title: "Oracle Fusion Cloud Financials: Accounting Hub Fundamentals", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Learn advanced implementation topics in Financials", 
+                url: "https://mylearn.oracle.com/ou/course/oracle-fusion-cloud-financials-accounting-hub-fundamentals/140173/" },
+
+                { title: "Oracle Fusion Cloud Financials: Expenses Fundamentals", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Learn advanced implementation topics in Financials", 
+                url: "https://mylearn.oracle.com/ou/course/oracle-fusion-cloud-financials-expenses-fundamentals/140039/" },
+
+                { title: "Oracle Fusion Cloud for Ebiz Consultants", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Apply Your Learnings through Use Cases and Best Practices", 
+                url: "https://mylearn.oracle.com/ou/learning-path/oracle-fusion-cloud-for-ebiz-consultants/116325" },
+
+                { title: "Oracle Fusion Cloud ERP for SAP Consultants", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Apply Your Learnings through Use Cases and Best Practices", 
+                url: "https://mylearn.oracle.com/ou/learning-path/oracle-fusion-cloud-erp-for-sap-consultants/114281" },
+
+                { title: "Oracle Fusion Enterprise Resource Planning for Self Service Cloud Service", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Learn about what configuration / Setting changes to make to the Product post implementation", 
+                url: "https://mylearn.oracle.com/ou/learning-path/oracle-fusion-enterprise-resource-planning-for-self-service-cloud-service/87062" },
+
+                { title: "General Ledger: Customer Power User Training", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Learn about what configuration / Setting changes to make to the Product post implementation", 
+                url: "https://mylearn.oracle.com/ou/learning-path/general-ledger-customer-power-user-training/60850" },
+
+                { title: "General Ledger: Customer Project Team Training", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Prepare to answer questions from the implementation team, prior to product implementation", 
+                url: "https://mylearn.oracle.com/ou/course/oracle-fusion-cloud-financials-expenses-fundamentals/140039/" },
+
+                { title: "Oracle Fusion Cloud Financials: Expenses Fundamentals", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Learn advanced implementation topics in Financials", 
+                url: "https://mylearn.oracle.com/ou/course/oracle-fusion-cloud-financials-expenses-fundamentals/140039/" },
+
+                { title: "Oracle Fusion Cloud Financials: Expenses Fundamentals", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Learn advanced implementation topics in Financials", 
+                url: "https://mylearn.oracle.com/ou/course/oracle-fusion-cloud-financials-expenses-fundamentals/140039/" },
+
+                { title: "Oracle Fusion Cloud Financials: Expenses Fundamentals", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Learn advanced implementation topics in Financials", 
+                url: "https://mylearn.oracle.com/ou/course/oracle-fusion-cloud-financials-expenses-fundamentals/140039/" },
+
+                { title: "Oracle Fusion Cloud Financials: Expenses Fundamentals", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Learn advanced implementation topics in Financials", 
+                url: "https://mylearn.oracle.com/ou/course/oracle-fusion-cloud-financials-expenses-fundamentals/140039/" },
+
+                { title: "Oracle Fusion Cloud Financials: Expenses Fundamentals", 
+                language: "english", 
+                category: "financials", 
+                platform: "oracle", 
+                img: "https://via.placeholder.com/250x150", 
+                description: "Learn advanced implementation topics in Financials", 
+                url: "https://mylearn.oracle.com/ou/course/oracle-fusion-cloud-financials-expenses-fundamentals/140039/" },
+            ];
+
+            let filteredCourses = [...courses];
+            const totalPages = () => Math.ceil(filteredCourses.length / coursesPerPage);
+
+            const displayCourses = (page) => {
+                coursesContainer.innerHTML = ""; // Clear the container
+                const startIndex = (page - 1) * coursesPerPage;
+                const endIndex = Math.min(startIndex + coursesPerPage, filteredCourses.length);
+
+                const currentCourses = filteredCourses.slice(startIndex, endIndex);
+                currentCourses.forEach(course => {
+                    const courseElement = document.createElement("div");
+                    courseElement.classList.add("course-card");
+                    courseElement.innerHTML = `
+                <a href="${course.url}" target="_blank">
+                    <img src="${course.img}" alt="${course.title}" />
+                    <h3>${course.title}</h3>
+                    <p>${course.description}</p>
+                </a>
+            `;
+                    coursesContainer.appendChild(courseElement);
+                });
+            };
+
+            const displayPagination = (currentPage) => {
+                paginationContainer.innerHTML = ""; // Clear pagination
+
+                const createPageButton = (page) => {
+                    const button = document.createElement("button");
+                    button.textContent = page;
+                    button.classList.add("pagination-button");
+                    if (page === currentPage) {
+                        button.classList.add("active");
+                    }
+                    button.addEventListener("click", () => {
+                        displayCourses(page);
+                        displayPagination(page);
+                    });
+                    return button;
+                };
+
+                // Previous button
+                if (currentPage > 1) {
+                    const prevButton = createPageButton(currentPage - 1);
+                    prevButton.textContent = "«";
+                    paginationContainer.appendChild(prevButton);
+                }
+
+                // Page buttons
+                for (let i = 1; i <= totalPages(); i++) {
+                    paginationContainer.appendChild(createPageButton(i));
+                }
+
+                // Next button
+                if (currentPage < totalPages()) {
+                    const nextButton = createPageButton(currentPage + 1);
+                    nextButton.textContent = "»";
+                    paginationContainer.appendChild(nextButton);
+                }
+            };
+
+            const filterCourses = () => {
+                const language = languageFilter.value;
+                const category = categoryFilter.value;
+                const platform = platformFilter.value;
+
+                filteredCourses = courses.filter(course => {
+                    return (
+                        (language === "all" || course.language === language) &&
+                        (category === "all" || course.category === category) &&
+                        (platform === "all" || course.platform === platform)
+                    );
+                });
+
+                // Reset to first page after filtering
+                displayCourses(1);
+                displayPagination(1);
+            };
+
+            // Event listeners for filters
+            languageFilter.addEventListener("change", filterCourses);
+            categoryFilter.addEventListener("change", filterCourses);
+            platformFilter.addEventListener("change", filterCourses);
+
+            // Initialize with page 1
+            displayCourses(1);
+            displayPagination(1);
+        });
+
+
+
+ [
+        {
+            title: "Introduction to Oracle Cloud Essentials",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "/course.img/Effective_Communication_(2).png",
+            description: "Are you new to Oracle Financials Cloud ? These classes will help kick-start your learning!",
+            url: "https://mylearn.oracle.com/ou/learning-path/introduction-to-oracle-cloud-essentials/115954"
+        },
+
+        {
+            title: "Oracle Cloud Applications Overview",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "/course.img/Screenshot 2024-12-16 095435.png",
+            description: "Are you new to Oracle Financials Cloud ? These classes will help kick-start your learning!",
+            url: "https://mylearn.oracle.com/ou/learning-path/oracle-cloud-applications-overview/115408"
+        },
+
+        {
+            title: "Oracle Fusion Cloud Financials: Financials Overview",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Get an overview of the core functions and capabilities of Oracle Financials Cloud Products.",
+            url: "https://mylearn.oracle.com/ou/course/oracle-fusion-cloud-financials-financials-overview/127477/"
+        },
+
+        {
+            title: "Planning Essentials for Oracle Cloud Applications",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Get an overview of the core functions and capabilities of Oracle Financials Cloud Products.",
+            url: "https://mylearn.oracle.com/ou/learning-path/planning-essentials-for-oracle-cloud-applications/119930"
+        },
+
+        {
+            title: "Oracle Playbook for Supply Chain Excellence",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "The Oracle Playbook is a compilation of our learnings over the last 20-plus years and explains how we focus on people, processes, and systems so we can achieve more with less.",
+            url: "https://mylearn.oracle.com/ou/course/oracle-playbook-for-supply-chain-excellence/143849/"
+        },
+
+        {
+            title: "Operational Excellence",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "The Oracle Playbook is a compilation of our learnings over the last 20-plus years and explains how we focus on people, processes, and systems so we can achieve more with less.",
+            url: "https://mylearn.oracle.com/ou/course/operational-excellence/123796/"
+        },
+
+        {
+            title: "AI Foundation for Oracle Cloud Applications",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Learn how AI in Oracle Fusion Enterprise Resource Planning (ERP) helps you make better decisions, finish tasks faster, and streamline Oracle Fusion CX processes.",
+            url: "https://mylearn.oracle.com/ou/course/ai-foundation-for-oracle-cloud-applications/127296/"
+        },
+
+        {
+            title: "Oracle AI in Fusion Cloud Enterprise Resource Planning (ERP)",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Learn how AI in Oracle Fusion Enterprise Resource Planning (ERP) helps you make better decisions, finish tasks faster, and streamline Oracle Fusion CX processes.",
+            url: "https://mylearn.oracle.com/ou/learning-path/oracle-ai-in-fusion-cloud-enterprise-resource-planning-erp/138666"
+        },
+
+        {
+            title: "What's New in Oracle Fusion Cloud Financials 24D",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Learn new features and capabilities",
+            url: "https://mylearn.oracle.com/ou/learning-path/whats-new-in-oracle-fusion-cloud-financials-24d/142814"
+        },
+
+        {
+            title: "What's New in Risk Management 24D",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Learn new features and capabilities",
+            url: "https://mylearn.oracle.com/ou/learning-path/whats-new-in-risk-management-24d/143293"
+        },
+
+        {
+            title: "Become a Certified Financials - General Ledger Implementer",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Become the expert implementer in your organization, and get Certified!",
+            url: "https://mylearn.oracle.com/ou/learning-path/become-a-certified-financials-general-ledger-implementer/96455"
+        },
+
+        {
+            title: "Become a Certified Financials - Payables Implementer",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Become the expert implementer in your organization, and get Certified!",
+            url: "https://mylearn.oracle.com/ou/learning-path/become-a-certified-financials-payables-implementer/96453"
+        },
+
+        {
+            title: "Prepare for Oracle Financials Cloud: Revenue Management Certification",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Prepare for Your Certification Exam, Find exam guides, sample questions, and other exam preparation resources",
+            url: "https://mylearn.oracle.com/ou/course/prepare-for-oracle-financials-cloud-revenue-management-certification/141021/"
+        },
+
+        {
+            title: "Prepare for Oracle Financials Cloud: Risk Management Certification",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Prepare for Your Certification Exam, Find exam guides, sample questions, and other exam preparation resources",
+            url: "https://mylearn.oracle.com/ou/course/prepare-for-oracle-financials-cloud-risk-management-certification/140866/"
+        },
+
+        {
+            title: "Delta Exam Preparation: Certified General Ledger Implementer",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Simplify the process of recertification",
+            url: "https://mylearn.oracle.com/ou/learning-path/delta-exam-preparation-certified-general-ledger-implementer/120374"
+        },
+
+        {
+            title: "Delta Exam Preparation: Certified Payables Implementer",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Simplify the process of recertification",
+            url: "https://mylearn.oracle.com/ou/learning-path/delta-exam-preparation-certified-payables-implementer/120386"
+        },
+
+        {
+            title: "Getting Started with Fusion Data Intelligence",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Learn about Oracle Fusion Analytics Warehouse: Analytics for Oracle Cloud applications, powered by Autonomous Data Warehouse and Oracle Analytics.",
+            url: "https://mylearn.oracle.com/ou/course/getting-started-with-fusion-data-intelligence/133877/"
+        },
+
+        {
+            title: "Technical Learning Path: Administer Security and Functional Setups for ERP",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Learn to Develop, Customize, Maintain and Support the ERP Application",
+            url: "https://mylearn.oracle.com/ou/learning-path/technical-learning-path-administer-security-and-functional-setups-for-erp/110298"
+        },
+
+        {
+            title: "Oracle Fusion Cloud Financials: Accounting Hub Fundamentals",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Learn advanced implementation topics in Financials",
+            url: "https://mylearn.oracle.com/ou/course/oracle-fusion-cloud-financials-accounting-hub-fundamentals/140173/"
+        },
+
+        {
+            title: "Oracle Fusion Cloud Financials: Expenses Fundamentals",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Learn advanced implementation topics in Financials",
+            url: "https://mylearn.oracle.com/ou/course/oracle-fusion-cloud-financials-expenses-fundamentals/140039/"
+        },
+
+        {
+            title: "Oracle Fusion Cloud for Ebiz Consultants",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Apply Your Learnings through Use Cases and Best Practices",
+            url: "https://mylearn.oracle.com/ou/learning-path/oracle-fusion-cloud-for-ebiz-consultants/116325"
+        },
+
+        {
+            title: "Oracle Fusion Cloud ERP for SAP Consultants",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Apply Your Learnings through Use Cases and Best Practices",
+            url: "https://mylearn.oracle.com/ou/learning-path/oracle-fusion-cloud-erp-for-sap-consultants/114281"
+        },
+
+        {
+            title: "Oracle Fusion Enterprise Resource Planning for Self Service Cloud Service",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Learn about what configuration / Setting changes to make to the Product post implementation",
+            url: "https://mylearn.oracle.com/ou/learning-path/oracle-fusion-enterprise-resource-planning-for-self-service-cloud-service/87062"
+        },
+
+        {
+            title: "General Ledger: Customer Power User Training",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Learn about what configuration / Setting changes to make to the Product post implementation",
+            url: "https://mylearn.oracle.com/ou/learning-path/general-ledger-customer-power-user-training/60850"
+        },
+
+        {
+            title: "General Ledger: Customer Project Team Training",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Prepare to answer questions from the implementation team, prior to product implementation",
+            url: "https://mylearn.oracle.com/ou/course/oracle-fusion-cloud-financials-expenses-fundamentals/140039/"
+        },
+
+        {
+            title: "Payables: Customer Project Team Training",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Prepare to answer questions from the implementation team, prior to product implementation",
+            url: "https://mylearn.oracle.com/ou/learning-path/payables-customer-project-team-training/60931"
+        },
+
+        {
+            title: "Oracle Fusion Cloud Applications: Run and Operate Foundations",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Manage Users and perform Administrator activities",
+            url: "https://mylearn.oracle.com/ou/course/oracle-fusion-cloud-applications-run-and-operate-foundations/129240/"
+        },
+
+        {
+            title: "Oracle Fusion Cloud Financials: Administration",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Manage Users and perform Administrator activities",
+            url: "https://mylearn.oracle.com/ou/course/oracle-fusion-cloud-financials-administration/127118/"
+        },
+
+        {
+            title: "Release Highlights: What's New in Financial Implementer 24B",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "See What's New in Oracle Financials Cloud Training and Certification.",
+            url: "https://mylearn.oracle.com/ou/course/release-highlights-whats-new-in-financial-implementer-24b/137340/"
+        },
+
+        {
+            title: "Release Highlights: What's New in Financial Implementer 24A",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "See What's New in Oracle Financials Cloud Training and Certification.",
+            url: "https://mylearn.oracle.com/ou/course/release-highlights-whats-new-in-financial-implementer-24a/133496/"
+        },
+
+        {
+            title: "Get Your Oracle How To Information in Real Time",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Quick Access to all Information Sources, and a Step by Step Guide: Opening and Escalating an SR.",
+            url: "https://mylearn.oracle.com/ou/course/get-your-oracle-how-to-information-in-real-time/108352/"
+        },
+
+        {
+            title: "Oracle Service Request and Escalation Process for Partners",
+            language: "english",
+            category: "financials",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Quick Access to all Information Sources, and a Step by Step Guide: Opening and Escalating an SR.",
+            url: "https://mylearn.oracle.com/ou/course/oracle-service-request-and-escalation-process-for-partners/108118/"
+        },
+    ]
+
+
+
+    
+    document.addEventListener("DOMContentLoaded", () => {
+    const coursesPerPage = 30; // Number of courses per page
+    const coursesContainer = document.getElementById("coursesContainer");
+    const paginationContainer = document.getElementById("paginationContainer");
+
+    const languageFilter = document.getElementById("languageFilter");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const platformFilter = document.getElementById("platformFilter");
+
+    const courses = [
+
+        // Start Oracle Cloud Infrastructure
+        {
+            title: "Introduction to Oracle Cloud Essentials",
+            language: "english",
+            category: "cloud infrastructure",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "This Learning Path introduces you to Cloud Computing and Oracle's Cloud Solutions which include Oracle Cloud Infrastructure and Oracle Cloud Applications. Quick product tours help you experience the capabilities of our OCI and SaaS Platforms.",
+            url: "https://mylearn.oracle.com/ou/learning-path/introduction-to-oracle-cloud-essentials/115954"
+        },
+
+        {
+            title: "Become An OCI Foundations Associate",
+            language: "english",
+            category: "cloud infrastructure",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Skills you will learn:Fundamentals of Oracle Cloud Infrastructure (OCI), Networking in OCI, Compute Services, Storage Solutions, Database Services, Security in OCI, Cost Management.This Learning Path also prepares you for the Oracle Cloud Infrastructure 2024 Foundations Associate certification.",
+            url: "https://mylearn.oracle.com/ou/learning-path/become-an-oci-foundations-associate-2024/139374"
+        },
+
+        {
+            title: "Become an Oracle Cloud Infrastructure Data Foundations Associate (2024)",
+            language: "english",
+            category: "cloud infrastructure",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: " Understand how Autonomous Databases handle diverse tasks and data types, and get introduced to modern data architectures like data lakehouse and data mesh. Finally, acquire skills to effectively manage your data environment, focusing on security, availability, and upgrades.",
+            url: "https://mylearn.oracle.com/ou/learning-path/become-an-oracle-cloud-infrastructure-data-foundations-associate-2024/140339"
+        },
+
+        {
+            title: "Become an OCI AI Foundations Associate",
+            language: "english",
+            category: "cloud infrastructure",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "This Learning Path prepares you for the OCI 2024 AI Foundations Associate Certification available to you for free. The certification exam consists of 40 questions to be answered in 60 minutes. The pass percentage is 65%. Oracle University Certification exam page has more details.",
+            url: "https://mylearn.oracle.com/ou/learning-path/become-an-oci-ai-foundations-associate-2024/140164"
+        },
+
+        {
+            title: "Cloud Adoption Framework and Essentials",
+            language: "english",
+            category: "cloud infrastructure",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Do you want to learn about the Cloud Adoption Framework (CAF) and OCI CAF's approach to adopting OCI? The Cloud Adoption Framework and Essentials course is the right place to start. This course is targeted at new OCI users, Business leaders, IT admins, Cloud Architects,  Operations Engineers, and Administrators who are looking to gain a solid foundation for successfully adopting OCI.",
+            url: "https://mylearn.oracle.com/ou/learning-path/cloud-adoption-framework-and-essentials/122491"
+        },
+
+        {
+            title: "Oracle Cloud Infrastructure Generative AI Professional",
+            language: "english",
+            category: "cloud infrastructure",
+            category: "ai",
+            // duplicate category
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            time: "6h.20m",
+            description: "course caters to Software Developers, Machine Learning/AI Engineers, and Gen AI Professionals. It offers an in-depth technical introduction to Large Language Models (LLMs), covering various aspects such as LLM architecture, fine-tuning techniques, code models, multimodal LLMs, and language agents...",
+            url: "https://mylearn.oracle.com/ou/course/oracle-cloud-infrastructure-generative-ai-professional/136035/"
+        },
+
+        {
+            title: "Integration of LLM with ODA",
+            language: "english",
+            category: "cloud infrastructure",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            time: "3h.15m",
+            description: "Learn about generative AI capabilities built for business across OCI services.",
+            url: "https://mylearn.oracle.com/ou/course/integration-of-llm-with-oda/139486/"
+        },
+
+        {
+            title: "Using OCI Generative AI with APEX",
+            language: "english",
+            category: "cloud infrastructure",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Learn about generative AI capabilities built for business across OCI services. Data Management in OCI, Machine Learning Solutions with OCI Data Science.",
+            time: "17m",
+            url: "https://mylearn.oracle.com/ou/course/using-oci-generative-ai-with-apex/139477/"
+        },
+
+        {
+            title: "OCI Generative AI Service: Getting Started",
+            language: "english",
+            category: "cloud infrastructure",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "This course aims to introduce the fundamentals of Generative AI and large language models (LLMs) in modern computing. Learn about OCI Generative AI Services and Oracle 23ai Vector Database using a structured approach that is both effective and engaging.",
+            time: "1h.31m",
+            url: "https://mylearn.oracle.com/ou/course/oci-generative-ai-service-getting-started/141097/"
+        },
+
+        {
+            title: "Bring AI to Your Database with Oracle Autonomous Database",
+            language: "english",
+            category: "cloud infrastructure",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "This course explores Oracle Autonomous Database's AI and machine learning features, such as natural language queries, spatial analytics, no-code model monitoring, and the Graph Studio interface. It focuses on how to use these tools to simplify AI adoption and gain actionable insights from data",
+            time: "39m",
+            url: "https://mylearn.oracle.com/ou/course/bring-ai-to-your-database-with-oracle-autonomous-database/141117/"
+        },
+
+        {
+            title: "Become an OCI Architect Associate",
+            language: "english",
+            category: "cloud infrastructure",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Discuss OCI Identity and Access Management services, Become proficient in OCI Networking services, Explain OCI Compute service offerings, Implement OCI Block Storage, Object Storage and File Storage services",
+            time: "22h.13m",
+            url: "https://mylearn.oracle.com/ou/learning-path/become-an-oci-architect-associate-2024/137550"
+        },
+
+        {
+            title: "Become an Oracle Cloud Infrastructure Multicloud Architect Professional (2025)",
+            language: "english",
+            category: "cloud infrastructure",
+            platform: "oracle",
+            img: "https://via.placeholder.com/250x150",
+            description: "Basics of OCI Identity and Access Management, OCI Networking and OCI Database services, Oracle Interconnect for Azure Deep- Dive, Oracle Interconnect for Google Cloud Deep - Dive, Multicloud Network Connectivity solutions, How to implement Oracle Database @Azure?, How to implement Oracle Database @Google Cloud ? This Learning Path also prepares you for the Oracle Cloud Infrastructure 2025 Multicloud Architect Professional certification.",
+            time: "7h.30m",
+            url: "https://mylearn.oracle.com/ou/learning-path/become-an-oracle-cloud-infrastructure-multicloud-architect-professional-2025/144472"
+        },
+    // End Oracle Cloud Infrastructure
+
+
+    // Start Oracle Cloud Application SaaS
+
+    {
+        title: "Oracle Financials Cloud Training and Certification",
+        language: "english",
+        category: "financials",
+        platform: "oracle",
+        img: "https://via.placeholder.com/250x150",
+        description: "The Oracle Financials Cloud Learning Subscription is a complete learning solution to implement and manage the Cloud financial System...",
+        url: "https://mylearn.oracle.com/ou/story/45170"
+    },
+
+    {
+        title: "Oracle Project Management Training and Certification",
+        language: "english",
+        category: "Project Management",
+        platform: "oracle",
+        img: "https://via.placeholder.com/250x150",
+        description: "The Project Management Learning subscription provides a Integrated Project Management Learning Courses. The Learning modules covers extensively on Project Financial Management and Project Execution Management.",
+        url: "https://mylearn.oracle.com/ou/story/37773"
+    },
+
+    {
+        title: "Oracle Enterprise Performance Management Cloud Training and Certification",
+        language: "english",
+        category: "Enterprise Performance Management",
+        platform: "oracle",
+        img: "https://via.placeholder.com/250x150",
+        description: "The Oracle Enterprise Performance Management (EPM) Cloud Learning Subscription is a complete learning solution to implement and manage the Oracle Enterprise Performance Management Cloud Business Process...",
+        url: "https://mylearn.oracle.com/ou/story/51518"
+    },
+
+    {
+        title: "Oracle Supply Chain Management & Manufacturing (SCM) Training and Certification",
+        language: "english",
+        category: "Supply Chain Management",
+        platform: "oracle",
+        img: "https://via.placeholder.com/250x150",
+        description: "The subscription provides a complete learning solution for Implementers, Managers, Administrators and Developers.",
+        url: "https://mylearn.oracle.com/ou/story/46418"
+    },
+
+    {
+        title: "Oracle Procurement Training and Certification",
+        language: "english",
+        category: "Procurement",
+        platform: "oracle",
+        img: "https://via.placeholder.com/250x150",
+        description: "The Oracle Procurement learning subscription is a complete learning solution for Implementers, managers, administrators, and developers. It includes product overviews , implementation workshops, new feature updates and guidance on how to keep costs under control by selecting the best suppliers, enforcing policy, and managing supplier risk...",
+        url: "https://mylearn.oracle.com/ou/story/46356"
+    },
+
+    {
+        title: "Oracle Global Human Resources Training and Certification",
+        language: "english",
+        category: "Global Human Resources",
+        platform: "oracle",
+        img: "https://via.placeholder.com/250x150",
+        description: "Discover how Oracle Global Human Resources Cloud can help you gain operational excellence and increase agility with a single instance that aligns common HR processes while supporting local compliance and process needs across multiple countries.",
+        url: "https://mylearn.oracle.com/ou/story/44447"
+    },
+
+    {
+        title: "Oracle Talent Management Training and Certification",
+        language: "english",
+        category: "Talent Management",
+        platform: "oracle",
+        img: "https://via.placeholder.com/250x150",
+        description: "Learn to implement and manage the Oracle Talent Management Cloud in this complete learning solution...",
+        url: "https://mylearn.oracle.com/ou/story/46602"
+    },
+
+    {
+        title: "Oracle Fusion Sales Training and Certification",
+        language: "english",
+        category: "Sales",
+        platform: "oracle",
+        img: "https://via.placeholder.com/250x150",
+        description: "With the Oracle Fusion Sales Learning Subscription, you can build new skills with Oracle training courses and validate expertise with Oracle Certification. Explore available beginner to advanced learning solutions, and try it for free with Learning Explorer paths...",
+        url: "https://mylearn.oracle.com/ou/story/45509"
+    },
+
+    {
+        title: "Oracle Field Service Training and Certification",
+        language: "english",
+        category: "Service",
+        platform: "oracle",
+        img: "https://via.placeholder.com/250x150",
+        description: "With the Oracle Field Service Learning Subscription, you can build new skills with Oracle training courses and validate expertise with Oracle Certification. Explore available beginner to advanced learning solutions, and try it for free with the Oracle Field Service Explorer learning path...",
+        url: "https://mylearn.oracle.com/ou/story/45640"
+    },
+
+    {
+        title: "Oracle Configure, Price, and Quote Training and Certification",
+        language: "english",
+        category: "Configure, Price, Quote",
+        platform: "oracle",
+        img: "https://via.placeholder.com/250x150",
+        description: "With the Oracle Configure, Price, and Quote (CPQ) Cloud Learning Subscription, you can build new skills with Oracle training courses and validate expertise with Oracle Certification...",
+        url: "https://mylearn.oracle.com/ou/story/45603"
+    },
+
+    {
+        title: "Oracle Commerce Training and Certification",
+        language: "english",
+        category: "Commerce",
+        platform: "oracle",
+        img: "https://via.placeholder.com/250x150",
+        description: "The Oracle Commerce Learning Subscription is a complete learning solution to implement and manage the Oracle Commerce Cloud Application. The Commerce modules cover Open Storefront Framework, Multisite Implementation, Integrations, Promotions, Catalog and Payments...",
+        url: "https://mylearn.oracle.com/ou/story/50047"
+    },
+
+    {
+        title: "Oracle Marketing Training and Certification",
+        language: "english",
+        category: "Marketing",
+        platform: "oracle",
+        img: "https://via.placeholder.com/250x150",
+        description: "Strengthen your skills for every Oracle Marketing application, including Eloqua, Responsys, Maxymiser, Infinity, CrowdTwist, Content Management, DataFox, Oracle BlueKai, Audience Segmentation and Unity.",
+        url: "https://mylearn.oracle.com/ou/story/37002"
+    },
+
+    {
+        title: "Oracle Permitting And Licensing Learning Subscription",
+        language: "english",
+        category: "Industries",
+        platform: "oracle",
+        img: "https://via.placeholder.com/250x150",
+        description: "Start your learning journey now!",
+        url: "https://mylearn.oracle.com/ou/story/124853"
+    },
+
+    {
+        title: "Oracle Financials Payables Training and Certification",
+        language: "english",
+        category: "SLS Payables",
+        platform: "oracle",
+        img: "https://via.placeholder.com/250x150",
+        description: "Oracle Financials Payables Training and Certification helps to understand the key concepts and processes involved in implementing Payables and to prepare to take the related certification exam.",
+        url: "https://mylearn.oracle.com/ou/story/109169"
+    },
+
+    {
+        title: "Oracle Guided Learning",
+        language: "english",
+        category: "Oracle Guided Learning",
+        platform: "oracle",
+        img: "https://via.placeholder.com/250x150",
+        description: "Get training and certification for all job roles in your organization that will create engaging OGL content to support your digital transformation.",
+        url: "https://mylearn.oracle.com/ou/story/75977"
+    },
+
+    {
+        title: "Oracle Field Service Training and Certification.",
+        language: "english",
+        category: "Service",
+        platform: "oracle",
+        img: "https://via.placeholder.com/250x150",
+        description: "With the Oracle Field Service Learning Subscription, you can build new skills with Oracle training courses and validate expertise with Oracle Certification. Explore available beginner to advanced learning solutions, and try it for free with the Oracle Field Service Explorer learning path.",
+        url: "https://mylearn.oracle.com/ou/story/47170"
+    },
+        // End Oracle Cloud Application SaaS
+
+
+        // Additional course objects...
+    ];
+
+let filteredCourses = [...courses];
+const totalPages = () => Math.ceil(filteredCourses.length / coursesPerPage);
+
+const displayCourses = (page) => {
+    coursesContainer.innerHTML = ""; // Clear the container
+    const startIndex = (page - 1) * coursesPerPage;
+    const endIndex = Math.min(startIndex + coursesPerPage, filteredCourses.length);
+
+    const currentCourses = filteredCourses.slice(startIndex, endIndex);
+    currentCourses.forEach((course, index) => {
+        const courseId = course-${page}-${index + 1}; // Unique ID for each course
+        const courseElement = document.createElement("div");
+        courseElement.classList.add("course-card");
+        courseElement.setAttribute("id", courseId); // Set the unique ID
+
+        courseElement.innerHTML = 
+                <a href="${course.url}" target="_blank">
+                    <img src="${course.img}" alt="${course.title}" />
+                    <h3>${course.title}</h3>
+                    <h4>${course.time}</h4>
+                    <p>${course.description}</p>
+                </a>
+                <button class="share-button" data-course-id="${courseId}">Share</button>
+            ;
+        coursesContainer.appendChild(courseElement);
+    });
+
+    // Add event listeners for the share buttons
+    document.querySelectorAll(".share-button").forEach(button => {
+        button.addEventListener("click", (event) => {
+            const courseId = event.target.getAttribute("data-course-id");
+            const courseElement = document.getElementById(courseId);
+            const courseLink = courseElement.querySelector("a").href;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: Check out this course: ${courseElement.querySelector("h3").textContent},
+                    text: Here is a great course I found!,
+                    url: courseLink
+                }).catch(error => console.error("Error sharing:", error));
+            } else {
+                const tempInput = document.createElement("input");
+                document.body.appendChild(tempInput);
+                tempInput.value = courseLink;
+                tempInput.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempInput);
+                alert("Link copied to clipboard!");
+            }
+        });
+    });
+};
+
+const displayPagination = (currentPage) => {
+    paginationContainer.innerHTML = ""; // Clear pagination
+
+    const createPageButton = (page) => {
+        const button = document.createElement("button");
+        button.textContent = page;
+        button.classList.add("pagination-button");
+        if (page === currentPage) {
+            button.classList.add("active");
+        }
+        button.addEventListener("click", () => {
+            displayCourses(page);
+            displayPagination(page);
+        });
+        return button;
+    };
+
+    // Previous button
+    if (currentPage > 1) {
+        const prevButton = createPageButton(currentPage - 1);
+        prevButton.textContent = "«";
+        paginationContainer.appendChild(prevButton);
+    }
+
+    // Page buttons
+    for (let i = 1; i <= totalPages(); i++) {
+        paginationContainer.appendChild(createPageButton(i));
+    }
+
+    // Next button
+    if (currentPage < totalPages()) {
+        const nextButton = createPageButton(currentPage + 1);
+        nextButton.textContent = "»";
+        paginationContainer.appendChild(nextButton);
+    }
+};
+
+const filterCourses = () => {
+    const language = languageFilter.value;
+    const category = categoryFilter.value;
+    const platform = platformFilter.value;
+
+    filteredCourses = courses.filter(course => {
+        return (
+            (language === "all" || course.language === language) &&
+            (category === "all" || course.category === category) &&
+            (platform === "all" || course.platform === platform)
+        );
+    });
+
+    // Reset to first page after filtering
+    displayCourses(1);
+    displayPagination(1);
+};
+
+// Event listeners for filters
+languageFilter.addEventListener("change", filterCourses);
+categoryFilter.addEventListener("change", filterCourses);
+platformFilter.addEventListener("change", filterCourses);
+
+// Initialize with page 1
+displayCourses(1);
+displayPagination(1);
+});
+
+
+//     <a href="${course.url}" target="_blank">
+            //         <img src="${course.img}" alt="${course.title}" />
+            //         <h3>${course.title}</h3>
+            //         <p>${course.description}</p>
+            //     </a>
+            //     <button class="share-button" data-course-id="${courseId}">Share</button>
+            // `;

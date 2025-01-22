@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Submission Form</title>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+        padding: 0;
+    }
+
+    .form-container {
+        max-width: 600px;
+        margin: 30px auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        background: #b6ff8c;
+        border-radius: 12px;
+        height: 40px; 
+        text-align: center;
+        padding-top: 12px;
+        color: #333;
+    }
+
+    form label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+        color: #555;
+    }
+
+    form input,
+    form select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+
+    ul#collegeSuggestions {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        border: 1px solid #ddd;
+        background: #fff;
+        max-height: 150px;
+        overflow-y: auto;
+        position: absolute;
+        width: 100%;
+        z-index: 1000;
+        display: none;
+    }
+
+    ul#collegeSuggestions li {
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    ul#collegeSuggestions li:hover {
+        background: #f0f0f0;
+    }
+
+    form button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 20px;
+        background-color: #1a5003c9;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    form button:hover {
+        background-color: #15f315;
+    }
+</style>
+
+<body>
+    <div class="form-container">
+        <div>
+            <h2>Submit Your Project Details</h2>
+        </div>
+        <form id="projectForm">
+            <!-- Basic Information -->
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" placeholder="Enter your name" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+
+            <!-- Location and College -->
+            <label for="country">Country:</label>
+            <select id="country" name="country" required>
+                <option value="" disabled selected>Select a country</option>
+            </select>
+
+            <label for="college">College Name / Self-Educated Student:</label>
+            <input type="text" id="college" name="college" placeholder="Type your college or select" autocomplete="off"
+                required>
+            <ul id="collegeSuggestions"></ul>
+
+            <!-- Additional Information -->
+            <label for="year">Year of Study:</label>
+            <input type="number" id="year" name="year" placeholder="Enter your current year of study" min="1" max="10"
+                required>
+
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" placeholder="Enter your age" min="13" max="100" required>
+
+            <label for="branch">Branch / Field of Study:</label>
+            <input type="text" id="branch" name="branch" placeholder="Enter your branch or field of study" required>
+
+            <!-- Project Links -->
+            <label for="projectLink">Project Video & Images (Google Drive Link):</label>
+            <input type="url" id="projectLink" name="projectLink" placeholder="Enter the Google Drive link" required>
+
+            <label for="sourceCode">Source Code (GitHub or other platforms):</label>
+            <input type="url" id="sourceCode" name="sourceCode" placeholder="Enter your source code link" required>
+
+            <!-- Social Media Links -->
+            <label for="linkedin">LinkedIn Profile:</label>
+            <input type="url" id="linkedin" name="linkedin" placeholder="Enter your LinkedIn profile link" required>
+
+            <label for="github">GitHub Account:</label>
+            <input type="url" id="github" name="github" placeholder="Enter your GitHub profile link" required>
+
+            <label for="instagram">Instagram Username:</label>
+            <input type="text" id="instagram" name="instagram" placeholder="Enter your Instagram username" required>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <script>
+        const countrySelect = document.getElementById('country');
+        const collegeInput = document.getElementById('college');
+        const suggestions = document.getElementById('collegeSuggestions');
+
+        // Fetch and Populate Country List
+        async function fetchCountries() {
+            const response = await fetch('https://restcountries.com/v3.1/all');
+            const countries = await response.json();
+            countries.sort((a, b) => a.name.common.localeCompare(b.name.common));
+            countries.forEach((country) => {
+                const option = document.createElement('option');
+                option.value = country.name.common;
+                option.textContent = country.name.common;
+                countrySelect.appendChild(option);
+            });
+        }
+
+        // Fetch Colleges Based on Country
+        async function fetchColleges(country) {
+            const response = await fetch(`=${country}`);
+            const colleges = await response.json();
+            return colleges.map((college) => college.name);
+        }
+
+        // Auto-Suggest Colleges
+        collegeInput.addEventListener('input', async function () {
+            const input = collegeInput.value.toLowerCase();
+            const country = countrySelect.value;
+            suggestions.innerHTML = '';
+            if (input && country) {
+                const colleges = await fetchColleges(country);
+                const filteredColleges = colleges.filter((college) =>
+                    college.toLowerCase().includes(input)
+                );
+                filteredColleges.forEach((college) => {
+                    const li = document.createElement('li');
+                    li.textContent = college;
+                    li.addEventListener('click', function () {
+                        collegeInput.value = college;
+                        suggestions.innerHTML = '';
+                        suggestions.style.display = 'none';
+                    });
+                    suggestions.appendChild(li);
+                });
+                suggestions.style.display = 'block';
+            } else {
+                suggestions.style.display = 'none';
+            }
+        });
+
+        // Form Submit
+        document.getElementById('projectForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            alert('Form Submitted Successfully!');
+        });
+
+        // Initialize
+        fetchCountries();
+
+    </script>
+</body>
+
+</html>

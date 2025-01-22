@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Filtering Platform</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <main class="main1">
+        <div class="mobile-menu-items">
+            <div class="close-icon">
+                <img src="icons/close-icon.webp" alt="Close Menu" />
+            </div>
+            <!-- Replace Resources with Courses Dropdown -->
+            <div class="mobile-courses-dropdown">
+                <a href="#">Courses</a>
+                <div class="mobile-submenu">
+
+                    <div class="mobile-submenu">
+
+                    </div>
+
+                    <div class="mobile-submenu">
+
+                    </div>
+                </div>
+            </div>
+            <a href="#project">Project</a>
+            <a href="#blog">Blog</a>
+            <a href="#about">About Us</a>
+            <a href="#contact">Contact Us</a>
+            <a href="https://hactarai.substack.com" class="btn">Subscribe</a>
+        </div>
+
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <a href="#home">HACTAR</a>
+                </div>
+
+                <div class="menu-items">
+                    <!-- Replace Resources with Courses Dropdown -->
+                    <div class="menu-item courses-dropdown">
+                        <a href="#">Courses</a>
+                        <ul class="submenu">
+                            <li>
+                                <a href="#">Engineering</a>
+                                <ul class="submenu">
+                                    <li><a href="#">Data Science (10)</a></li>
+                                    <li><a href="#">Web Development (5)</a></li>
+                                    <li><a href="#">AI & ML (8)</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#">Finance</a>
+                                <ul class="submenu">
+                                    <li><a href="#">Stock Market (12)</a></li>
+                                    <li><a href="#">Accounting (7)</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#">Design</a>
+                                <ul class="submenu">
+                                    <li><a href="#">Graphic Design (6)</a></li>
+                                    <li><a href="#">UI/UX (3)</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <a href="#project">Project</a>
+                    <a href="#blog">Blog</a>
+                    <a href="#about">About Us</a>
+                    <a href="#contact">Contact Us</a>
+                    <a href="https://hactarai.substack.com" class="btn">Subscribe</a>
+                </div>
+
+                <div class="menu-icon">
+                    <img src="icons/menu-icon.webp" alt="Menu Icon" />
+                </div>
+            </nav>
+        </div>
+
+        <br>
+        <br>
+        <br>
+        <!-- Carousel Section -->
+        <div class="slider-container">
+            <div class="slider">
+                <div class="slide active">
+                    <a href="">
+                        <img src="images/slider1.jpg" alt="" />
+                        <div class="slide-content">
+                            <h2 class="slide-title">IIT Free Course</h2>
+                            <p class="slide-description">
+                                Welcome to the era of spatial computing.
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+
+
+                <div class="slide">
+                    <a href="">
+                        <img src="images/slider2.jpg" alt="" />
+                        <div class="slide-content">
+                            <h2 class="slide-title">Free Microsoft Program</h2>
+                            <p class="slide-description">Mind-blowing. Head-turning.</p>
+                        </div>
+                    </a>
+                </div>
+
+
+                <div class="slide">
+                    <a href="">
+                        <img src="images/slider3.jpg" alt="" />
+                        <div class="slide-content">
+                            <h2 class="slide-title">Free Amazon Certification</h2>
+                            <p class="slide-description">
+                                Adaptive Audio. Sound that adapts to you.
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="slide">
+                    <a href="">
+                        <img src="images/slider4.jpg" alt="" />
+                        <div class="slide-content">
+                            <h2 class="slide-title">Harward Degree Program</h2>
+                            <p class="slide-description">Light. Bright. Full of might.</p>
+                        </div>
+                </div>
+                </a>
+            </div>
+
+            <div class="slider-nav"></div>
+
+            <div class="slider-arrow prev">
+                <span class="arrow-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                    </svg>
+                </span>
+            </div>
+
+            <div class="slider-arrow next">
+                <span class="arrow-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    </svg>
+                </span>
+            </div>
+        </div>
+        <br>
+
+        <div class="web-container">
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input 
+                    type="text" 
+                    id="searchBar" 
+                    placeholder="Search for courses..." 
+                    aria-label="Search courses" 
+                    oninput="suggestCourses()" 
+                >
+                <button id="searchButton" onclick="searchCourses()">Search</button>
+            </div>
+            <div id="suggestions" class="suggestions-list"></div>
+            
+
+            <div class="main-layout">
+                <!-- Filters Section -->
+                <div class="filters">
+                    <h2>Filters</h2>
+                    <div class="filter">
+                        <label for="languageFilter">Language:</label>
+                        <select id="languageFilter">
+                            <option value="all">All Languages</option>
+                            <option value="english">English</option>
+                            <option value="hindi">Hindi</option>
+                            <option value="spanish">Spanish</option>
+                            <option value="europen">Europen</option>
+                            <option value="japanese">Japanese</option>
+                            <option value="chinese">Chinese</option>
+                            <option value="brazilian portuguese">Brazilian Portuguese</option>
+                        </select>
+                    </div>
+                    <div class="filter">
+                        <label for="categoryFilter">Category:</label>
+                        <select id="categoryFilter">
+                            <option value="all">All Categories</option>
+                            <option value="ai">Ai</option>
+                            <option value="programming">Programming</option>
+                            <option value="banking">Banking</option>
+                            <option value="industries">Industries</option>
+                            <option value="business">Business</option>
+                            <option value="design">Design</option>
+                            <option value="health">Health</option>
+                            <option value="financials">Financials</option>
+                            <option value="Procurement">Procurement</option>
+                            <option value="Sales">Sales</option>
+                            <option value="Service">Service</option>
+                            <option value="Commerce">Commerce</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="cloud infrastructure">Cloud Infrastructure</option>
+                            <option value="Oracle Guided Learning">Oracle Guided Learning</option>
+                            <option value="SLS Payables">SLS Payables</option>
+                            <option value="Industries">Oracle Permitting and Licensing</option>
+                            <option value="Configure, Price, Quote">Configure, Price, Quote</option>
+                            <option value="Talent Management">Talent Management</option>
+                            <option value="Global Human Resources">Global Human Resources</option>
+                            <option value="Supply Chain Management">Supply Chain Management</option>
+                            <option value="Project Management">Project Management</option>
+                            <option value="Enterprise Performance Management
+                        ">Enterprise Performance Management (EPM)
+                            </option>
+                        </select>
+                    </div>
+                    <div class="filter">
+                        <label for="platformFilter">Platform:</label>
+                        <select id="platformFilter">
+                            <option value="all">All Platforms</option>
+                            <option value="udemy">Udemy</option>
+                            <option value="coursera">Coursera</option>
+                            <option value="edx">edX</option>
+                            <option value="indiaskill">india Skill</option>
+                            <option value="amazon">Amazon</option>
+                            <option value="oracle">Oracle</option>
+                        </select>
+                    </div>
+                    <div class="filter">
+                        <label for="priceFilter">Price:</label>
+                        <select id="priceFilter">
+                            <option value="all">All Price</option>
+                            <option value="free">Free</option>
+                            <option value="free-trial">Free-trial</option>
+                            <option value="paid">Paid</option>
+                        </select>
+                    </div>
+                    <div class="filter">
+                        <label for="sortBy">Sort by:</label>
+                        <select id="sortBy">
+                            <option value="title">Title</option>
+                            <option value="platform">Platform</option>
+                        </select>
+                    </div>
+                    <button class="clear-filters" onclick="resetFilters()">Clear Filters</button>
+                </div>
+
+                <!-- Courses Section -->
+                <div class="courses" id="coursesContainer">
+                    <!-- Course cards will be dynamically inserted here -->
+                </div>
+            </div>
+            <div id="coursesContainer" class="courses-container"></div>
+            <div id="paginationContainer" class="pagination-container">
+
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <span id="footer">
+        <h1>Smarter Then world</h1>
+        <p>&copy; All Right reserve Tarang Lilhare</p>
+        <a href="#">
+            <img src="icons/close-icon.webp" alt="" srcset="">
+        </a>
+        <a href="#">
+            <img src="icons/close-icon.webp" alt="" srcset="">
+        </a>
+        <a href="#">
+            <img src="icons/close-icon.webp" alt="" srcset="">
+        </a>
+        <a href="#">
+            <img src="icons/close-icon.webp" alt="" srcset="">
+        </a>
+    </span>
+    </footer>
+
+    <script src="script.js"></script>
+
+
+</body>
+
+</html>
